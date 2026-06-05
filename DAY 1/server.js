@@ -1,7 +1,7 @@
 import http from 'http';
 
 const server = http.createServer((req,res)=>{ // create server
-    res.writeHead(200,{"content-type":"text/plain"}); // set header for data response 
+    res.writeHead(200,{"content-type":"text/plain"}); // set header for data response
     res.end("Node Server Run Successfully !");
 });
 
