@@ -1,26 +1,26 @@
-import http from "http";
+// import http from "http";
 // import { time } from "console";
-    import http from "http";
-    const multi = http.createServer((req, res) => {
-        if (req.url == "/" && req.method == "GET") {
-            res.writeHead(200, { "content-type": "aplication/json" });
-            res.end(JSON.stringify(
-                {
-                    status: true,
-                    current: Date.now();
-                }
-            ))
-        }
-        else {
-        res.writeHead(404, { "content-type": "application/json" })
+import http from "http";
+import fs from "fs"
+import path from "path"
+
+if (!fs.existsSync("log.txt")) {
+    fs.writeFileSync("DAY-3/log.txt", "");
+}
+
+const server = http.createServer((req, res) => {
+    const date = new Date();
+    const log = "The server enter on" + req.url + "it on time " + date.getDay() + "/" + date.getMonth() + "/" + date.getFullYear();
+    fs.appendFileSync("DAY-3/log.txt","\n"+log);
+    res.writeHead(200, { "content-type": "aplication/json" });
         res.end(JSON.stringify(
             {
-                status: false,
-                message: "Page not found Page !"
+                status: true
             }
         ))
     }
-    })
-    multi.listen(3003,()=>{
-        console.log("server is stard !")
-    })
+)
+
+server.listen(5000,()=>{
+    console.log("Server is stard !");
+})
