@@ -1,5 +1,5 @@
-    const date = new Date();
-import { time } from "console";
+import http from "http";
+// import { time } from "console";
     import http from "http";
     const multi = http.createServer((req, res) => {
         if (req.url == "/" && req.method == "GET") {
@@ -7,8 +7,17 @@ import { time } from "console";
             res.end(JSON.stringify(
                 {
                     status: true
-                    time: date.now()      
+                    current: Date.now()      
                 }
             ))
         }
+        else {
+        res.writeHead(404, { "content-type": "application/json" })
+        res.end(JSON.stringify(
+            {
+                status: false,
+                message: "Page not found Page !"
+            }
+        ))
+    }
     })
