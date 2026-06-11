@@ -6,8 +6,8 @@ import http from "http";
             res.writeHead(200, { "content-type": "aplication/json" });
             res.end(JSON.stringify(
                 {
-                    status: true
-                    current: Date.now()      
+                    status: true,
+                    current: Date.now();
                 }
             ))
         }
@@ -20,4 +20,7 @@ import http from "http";
             }
         ))
     }
+    })
+    multi.listen(3003,()=>{
+        console.log("server is stard !")
     })
