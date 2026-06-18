@@ -9,5 +9,3 @@ export const connectDB = async () => {
   console.log("MongoDB Connected...");
   return client.db(dbName);              // return db reference
 };
-
-connectDB();
