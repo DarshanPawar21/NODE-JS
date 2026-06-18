@@ -4,21 +4,36 @@ const url = "mongodb://localhost:27017";
 const client = new MongoClient(url);
 const dbname = "student-db";
 
-const connnectDB = async()=>{
-   await client.connect();
-   console.log("server connected...");
-   return client.db(dbname);
+const connnectDB = async () => {
+    await client.connect();
+    console.log("server connected...");
+    return client.db(dbname);
 };
 
 
-const AddStudent = async () =>{
-    const db =  await connnectDB();
+const AddStudent = async () => {
+    const db = await connnectDB();
     await db.collection("student").insertOne({
-        name:"Darshan Pawar",
-        course : "Full Stack Devloper",
-        Age:18,
+        name: "Darshan Pawar",
+        course: "Full Stack Devloper",
+        Age: 18,
     });
     console.log("Student Add successfuly !")
 };
 
-AddStudent();
+const getstudent = async () => {
+    const db = await connnectDB();
+    const result = await db.collection("student").find().toArray();
+    console.log("getdata successfuly", result);
+}
+
+const removestudent = async () => {
+    const db = await connnectDB();
+    await db.collection("student").deleteOne({
+        name :"Darshan Pawar",
+    });
+    console.log("students data delete successfuly !");
+}
+// AddStudent();
+// getstudent();
+removestudent();
