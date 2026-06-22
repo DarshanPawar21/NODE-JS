@@ -1,7 +1,7 @@
 import Book from "../models/booksModel.js";
 export const addbook = async (req,res) => {
     try {
-        const book = await Book.create(
+        const note = await Book.create(
             {
                 title: "Rich dad poor dad",
                 author: "darshan",
@@ -19,4 +19,3 @@ export const addbook = async (req,res) => {
         });
     }
 };
-addbook();
