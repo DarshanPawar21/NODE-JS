@@ -22,6 +22,7 @@ export const getbook = async (req, res) => {
         res.status(200).json({
             status: true,
             message: "Book fetched successfuly !",
+            result,
         });
     } catch (err) {
         res.status(400).json({
@@ -35,7 +36,7 @@ export const getbook = async (req, res) => {
 
 export const updatebook = async (req, res) => {
     try {
-        const result = await book.findByIdAndUpdate(req.body.id, req.body);
+        const result = await Book.findByIdAndUpdate(req.body.id, req.body);
         res.status(200).json({
             status: true,
             message: "Book Update successfuly !",
@@ -44,6 +45,22 @@ export const updatebook = async (req, res) => {
         res.status(400).json({
             status: false,
             message: "Book Failed failed !",
+            err: err.message,
+        });
+    }
+};
+
+export const deletebook = async (req, res) => {
+    try {
+        const result = await Book.findByIdAndDelete(req.body, req.body);
+        res.status(200).json({
+            status: true,
+            message: "Book Delete Successfuly !",
+        })
+    } catch (err) {
+        res.status(400).json({
+            status: false,
+            message: "Book Delete failed !",
             err: err.message,
         });
     }
