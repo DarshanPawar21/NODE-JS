@@ -1,3 +1,4 @@
+import { json } from "express";
 import Customer from "../models/costomer_model.js";
 
 export const addcustomer = async (req, res) => {
@@ -87,3 +88,31 @@ export const deletecustomer = async (req, res) => {
         )
     }
 }
+
+export const getbyid = async (req, res) => {
+    try {
+        const result = await Customer.find({id:req.params.id});
+        // const result = await json({data: req.params.id});
+        res.status(201).json(
+            {
+                status: true,
+                message: "Customer data Get Successfuly !",
+                result
+            }
+        )
+    }
+    catch (err) {
+        res.status(400).json(
+            {
+                status: false,
+                message: "Customer data get Failed !",
+                err: err.message
+            }
+        )
+    }
+}
+
+// app.get("/user/:id", (req, res) => {
+//   const userId = req.params.id;
+//   res.send(`User ID is ${userId}`);
+// });
