@@ -84,7 +84,7 @@ export const deletecustomer = async (req, res) => {
                 status: false,
                 message: "Customer data delete Failed !",
                 err: err.message
-                
+
             }
         )
     }
@@ -92,7 +92,7 @@ export const deletecustomer = async (req, res) => {
 
 export const getbyid = async (req, res) => {
     try {
-        const result = await Customer.find({id:req.params.id});
+        const result = await Customer.find({ _id: req.params.id });
         // const result = await json({data: req.params.id});
         res.status(201).json(
             {
@@ -107,6 +107,50 @@ export const getbyid = async (req, res) => {
             {
                 status: false,
                 message: "Customer data get Failed !",
+                err: err.message
+            }
+        )
+    }
+};
+
+export const putbyid = async (req, res) => {
+    try {
+        const result = await Customer.findByIdAndUpdate(req.params.id, req.body);
+        res.status(201).json(
+            {
+                status: true,
+                message: "Customer data Get Successfuly !",
+                result
+            }
+        )
+    }
+    catch (err) {
+        res.status(400).json(
+            {
+                status: false,
+                message: "Customer data update Failed !",
+                err: err.message
+            }
+        )
+    }
+};
+
+export const deletebyid = async (req, res) => {
+    try {
+        const result = await Customer.findByIdAndDelete(req.params.id);
+        res.status(201).json(
+            {
+                status: true,
+                message: "Customer data delete Successfuly !",
+                result
+            }
+        )
+    }
+    catch (err) {
+        res.status(400).json(
+            {
+                status: false,
+                message: "Customer data delete Failed !",
                 err: err.message
             }
         )
