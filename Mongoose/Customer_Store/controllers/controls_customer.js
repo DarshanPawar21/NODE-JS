@@ -84,6 +84,7 @@ export const deletecustomer = async (req, res) => {
                 status: false,
                 message: "Customer data delete Failed !",
                 err: err.message
+                
             }
         )
     }
