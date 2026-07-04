@@ -1,11 +1,11 @@
 import express from "express";
 import connectDB from "./confit/db.js";
 import router from "./routes/routebook.js";
-
+import cors from "cors"
 const app = express();
 
 app.use(express.json());
-
+app.use(cors());
 connectDB();
 
 app.use("/api",router);
