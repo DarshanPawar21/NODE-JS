@@ -9,7 +9,6 @@ app.use(cors());
 connectDB();
 
 app.use("/api",router);
-
 app.listen(3000,()=>{
     console.log("Server is connnect succesfuly !");
 })
