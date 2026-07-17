@@ -43,18 +43,23 @@ export const updateproduct = async (req, res) => {
     } catch (err) {
         res.status(400).json({
             status: false,
-            message: "product add failed !",
+            message: "product update failed !",
             err: err.message
         })
     }
 }
 export const deleteproduct = async (req, res) => {
     try {
-        const result = await productSchema.findByIdAndUpdate(req.params.id);
+        const result = await productSchema.findByIdAndDelete(req.params.id);
+         res.status(200).json({
+            status: true,
+            message: "Product delete successfuly !",
+            products: result
+        })
     } catch (err) {
         res.status(400).json({
             status: false,
-            message: "product add failed !",
+            message: "product delete failed !",
             err: err.message
         })
     }
