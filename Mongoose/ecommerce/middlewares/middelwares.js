@@ -3,11 +3,11 @@ import bcrypt from "bcrypt";
 export const vadidationsignin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        const result = await auth.findOne({ email });
+        const result = await auth.findOne({ email }); // its function return all key in match onr single key.
         if (!result) {
             res.status(404).json({
                 status: false,
-                message: "User Are NOt Found !"
+                message: "User Are NOt Found !",
             })
         }
         const ans = await bcrypt.compare(password, result.password);
