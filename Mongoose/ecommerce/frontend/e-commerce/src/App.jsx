@@ -4,9 +4,7 @@ import axios from "axios";
 export default function App(){
   const getproduct = async () =>{
     try{
-      const res = await axios.get("http://localhost:5000/product/get",{
-        withCredentials : true,
-      });
+      const res = await axios.post("http://localhost:5000/product/signin",{email:"dp7878033@gmail.com",password:"Darshan@2110"},{withCredentials:true});
       console.log(res.data);
     }catch(err){
       console.log(err)

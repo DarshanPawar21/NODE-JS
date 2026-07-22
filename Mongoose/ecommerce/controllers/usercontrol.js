@@ -10,7 +10,7 @@ export const signup = async (req, res) => {
             status: true,
             message: "Signup successfully !",
         })
-    } catch (err) {
+    } catch (err) { 
         res.status(400).json({
             status: true,
             message: "Signup Failed !",
