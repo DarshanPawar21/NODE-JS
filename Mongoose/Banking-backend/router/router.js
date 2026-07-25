@@ -1,7 +1,12 @@
 const express = require("express");
-// const { default: adminSchema } = require("../module/adminSchema");
-const addadmin = require("../controllers/addcontrol.js");
 const router = express.Router();
 
-router.post("/", addadmin);
+// Correct Destructured Import
+const { addAdmin, addBranch, adduser, addAccount } = require("../controllers/addcontrol.js");
+
+router.post("/addAdmin", addAdmin);
+router.post("/addBranch", addBranch);
+router.post("/addUser", adduser);
+router.post("/addAccount", addAccount);
+
 module.exports = router;
