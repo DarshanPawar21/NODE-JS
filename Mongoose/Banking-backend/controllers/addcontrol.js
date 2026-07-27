@@ -1,11 +1,39 @@
 const adminSchema = require("../module/adminSchema.js");
 const BrachSchema = require("../module/brachShema.js");
 const UserSchema = require("../module/userScema.js");
-const AccountShema = require("../module/acountsSchema.js")
+const AccountShema = require("../module/acountsSchema.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET || "!@#$%^&*()";
+const JWT_EXPIRES_IN = "1h";
+const COOKIE_MAX_AGE = 1000 * 60 * 60; // 1 hour
+
 const addAdmin = async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        const result = await adminSchema.create(req.body);
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const result = await adminSchema.create({
+            name,
+            email,
+            password: hashedPassword
+        });
+        const token = jwt.sign(
+            {
+                id: result._id,
+                email: result.email,
+                role: "admin"
+            },
+            JWT_SECRET,
+            { expiresIn: JWT_EXPIRES_IN }
+        );
+
+        res.cookie("adminToken", token, {
+            httpOnly: true,
+            maxAge: COOKIE_MAX_AGE,
+            sameSite: "lax"
+        });
         res.status(200).json({
             status: true,
             message: "admin add successfuly !",
@@ -17,6 +45,58 @@ const addAdmin = async (req, res) => {
             message: "admin add failed successfuly !",
             err: err.message
         })
+    }
+};
+
+const loginAdmin = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const result = await adminSchema.findOne({ email });
+        if (!result) {
+            return res.status(404).json({
+                status: false,
+                message: "Admin Not Found !"
+            })
+        }
+        const ismatch = await bcrypt.compare(password, result.password);
+        if (!ismatch) {
+            return res.status(401).json({
+                status: false,
+                message: "invalid Password !"
+            })
+        };
+
+        const token = jwt.sign(
+            {
+                id: result._id,
+                email: result.email,
+                role: "admin"
+            },
+            JWT_SECRET,
+            { expiresIn: JWT_EXPIRES_IN }
+        );
+
+        res.cookie("adminToken", token, {
+            httpOnly: true,
+            maxAge: COOKIE_MAX_AGE,
+        });
+
+        res.status(200).json({
+            status: true,
+            message: "Login successful",
+            token,
+            admin: {
+                id: result._id,
+                name: result.name,
+                email: result.email
+            }
+        });
+    } catch (err) {
+        return res.status(400).json({
+            status: false,
+            message: "Login failed",
+            err: err.message
+        });
     }
 };
 
@@ -78,18 +158,34 @@ const addAccount = async (req, res) => {
 const adduser = async (req, res) => {
     try {
         const { name, email, aadharNumber, phone } = req.body;
-        const result = await UserSchema.create(req.body);
+
+        if (!name || !email || !aadharNumber || !phone) {
+            return res.status(400).json({
+                status: false,
+                message: "name, email, aadharNumber, and phone are required"
+            });
+        }
+
+        const user = await UserSchema.findOne({ aadharNumber });
+        if (user) {
+            return res.status(409).json({
+                status: false,
+                message: "User with this aadharNumber already exists"
+            });
+        }
+
+        const result = await UserSchema.create({ name, email, aadharNumber, phone });
         res.status(201).json({
             status: true,
             message: 'User is Create Successfully !',
             result
-        })
+        });
     } catch (err) {
         res.status(400).json({
             status: false,
             message: "User add failed successfuly !",
             err: err.message
-        })
+        });
     }
 };
-module.exports = { addAdmin, addBranch, addAccount, adduser }
+module.exports = { addAdmin, addBranch, addAccount, adduser, loginAdmin };

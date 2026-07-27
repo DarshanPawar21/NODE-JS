@@ -5,13 +5,16 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
+        required: true
     },
     aadharNumber: {
         type: String,
-        unique: true
+        unique: true,
+        required: true
     },
     phone: {
         type: Number,
+        required: true
     },
 }, {
     timestamps: true

@@ -1,12 +1,14 @@
 const express = require("express");
+const { addAdmin, addBranch, adduser, addAccount, loginAdmin } = require("../controllers/addcontrol.js");
+const { checkAdminToken } = require("../middleware/middlewares.js");
+const { getuser } = require("../controllers/getcontrol.js");
 const router = express.Router();
-
-// Correct Destructured Import
-const { addAdmin, addBranch, adduser, addAccount } = require("../controllers/addcontrol.js");
 
 router.post("/addAdmin", addAdmin);
 router.post("/addBranch", addBranch);
 router.post("/addUser", adduser);
 router.post("/addAccount", addAccount);
+router.get("/getaccount", getuser);
+router.post("/loginadmin", checkAdminToken, loginAdmin);
 
 module.exports = router;
