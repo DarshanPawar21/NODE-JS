@@ -1,4 +1,4 @@
-import StudentSchema from "../models/StudentSchema";
+import StudentSchema from "../models/StudentSchema.js";
 const updatestudent = async (req, res) => {
     try {
         const result = await StudentSchema.findByIdAndUpdate(req.body.id, req.body);
