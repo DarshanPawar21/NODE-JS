@@ -50,22 +50,28 @@ const addAdmin = async (req, res) => {
 
 const loginAdmin = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const result = await adminSchema.findOne({ email });
-        if (!result) {
-            return res.status(404).json({
-                status: false,
-                message: "Admin Not Found !"
-            })
-        }
-        const ismatch = await bcrypt.compare(password, result.password);
-        if (!ismatch) {
+        const token = req.cookies.adminToken;
+
+        if (!token) {
             return res.status(401).json({
                 status: false,
-                message: "invalid Password !"
-            })
-        };
+                message: "Not logged in"
+            });
+        }
 
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.admin = decoded
+
+        return res.status(200).json({
+            status: true,
+            message: "Login successful",
+            token,
+            admin: {
+                id: result._id,
+                name: result.name,
+                email: result.email
+            }
+        });
         const token = jwt.sign(
             {
                 id: result._id,
@@ -79,17 +85,6 @@ const loginAdmin = async (req, res) => {
         res.cookie("adminToken", token, {
             httpOnly: true,
             maxAge: COOKIE_MAX_AGE,
-        });
-
-        res.status(200).json({
-            status: true,
-            message: "Login successful",
-            token,
-            admin: {
-                id: result._id,
-                name: result.name,
-                email: result.email
-            }
         });
     } catch (err) {
         return res.status(400).json({
@@ -157,12 +152,12 @@ const addAccount = async (req, res) => {
 
 const adduser = async (req, res) => {
     try {
-        const { name, email, aadharNumber, phone } = req.body;
+        const { name, email, aadharNumber, phone, password } = req.body;
 
         if (!name || !email || !aadharNumber || !phone) {
             return res.status(400).json({
                 status: false,
-                message: "name, email, aadharNumber, and phone are required"
+                message: "name, email, aadharNumber, and phone are required !"
             });
         }
 
@@ -170,11 +165,12 @@ const adduser = async (req, res) => {
         if (user) {
             return res.status(409).json({
                 status: false,
-                message: "User with this aadharNumber already exists"
+                message: "User is aadharNumber already exists"
             });
         }
+        const hash = await bcrypt.hash(password, 10);
+        const result = await UserSchema.create({ name, email, aadharNumber, phone, password: password });
 
-        const result = await UserSchema.create({ name, email, aadharNumber, phone });
         res.status(201).json({
             status: true,
             message: 'User is Create Successfully !',

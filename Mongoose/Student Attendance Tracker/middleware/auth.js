@@ -1,4 +1,4 @@
-const autu = async (req, res) => {
+const auth = async (req, res) => {
     const token = jwt.sign(
         {
             id: result.id,

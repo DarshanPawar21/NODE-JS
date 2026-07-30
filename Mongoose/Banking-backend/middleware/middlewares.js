@@ -28,25 +28,21 @@ const JWT_SECRET = process.env.JWT_SECRET || "!@#$%^&*()";
 // };
 
 const checkAdminToken = (req, res, next) => {
-    const token = req.cookies.adminToken;
-
-    if (!token) {
-        return res.status(401).json({
-            status: false,
-            message: "Not logged in"
-        });
-    }
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        req.admin = decoded;
-    } catch (err) {
-        res.clearCookie("adminToken", {
-            httpOnly: true,
-            sameSite: "lax"
-        });
-    }
-
+    const { email, password } = req.body;
+            const result = await adminSchema.findOne({ email });
+            if (!result) {
+                return res.status(404).json({
+                    status: false,
+                    message: "Admin Not Found !"
+                })
+            }
+            const ismatch = await bcrypt.compare(password, result.password);
+            if (!ismatch) {
+                return res.status(401).json({
+                    status: false,
+                    message: "invalid Password !"
+                })
+            };
     next();
 };
 

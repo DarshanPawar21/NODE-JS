@@ -1,5 +1,6 @@
 import StudentSchema from "../models/StudentSchema.js";
 import TeachersSchema from "../models/TeachersSchema.js";
+import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 export const AddStudent = async (req, res) => {
     try {
@@ -20,7 +21,13 @@ export const AddStudent = async (req, res) => {
 
 export const AddTeacher = async (req, res) => {
     try {
-        const result = await TeachersSchema.create(req.body);
+        const { name, email, password } = req.body;
+        const hash = await bcrypt.hash(password, 12);
+        const result = await TeachersSchema.create({
+            name,
+            email,
+            password: hash
+        })
         if (!result) {
             return res.status(401).json({
                 status: false,
