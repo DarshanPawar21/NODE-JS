@@ -5,8 +5,6 @@ const AccountShema = require("../module/acountsSchema.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "!@#$%^&*()";
-const JWT_EXPIRES_IN = "1h";
-const COOKIE_MAX_AGE = 1000 * 60 * 60; // 1 hour
 
 const addAdmin = async (req, res) => {
     try {
@@ -19,77 +17,16 @@ const addAdmin = async (req, res) => {
             email,
             password: hashedPassword
         });
-        const token = jwt.sign(
-            {
-                id: result._id,
-                email: result.email,
-                role: "admin"
-            },
-            JWT_SECRET,
-            { expiresIn: JWT_EXPIRES_IN }
-        );
-
-        res.cookie("adminToken", token, {
-            httpOnly: true,
-            maxAge: COOKIE_MAX_AGE,
-            sameSite: "lax"
-        });
         res.status(200).json({
             status: true,
-            message: "admin add successfuly !",
-            result
-        })
+            message: "admin added successfully !",
+            result,
+            token
+        });
     } catch (err) {
         res.status(400).json({
             status: false,
-            message: "admin add failed successfuly !",
-            err: err.message
-        })
-    }
-};
-
-const loginAdmin = async (req, res) => {
-    try {
-        const token = req.cookies.adminToken;
-
-        if (!token) {
-            return res.status(401).json({
-                status: false,
-                message: "Not logged in"
-            });
-        }
-
-        const decoded = jwt.verify(token, JWT_SECRET);
-        req.admin = decoded
-
-        return res.status(200).json({
-            status: true,
-            message: "Login successful",
-            token,
-            admin: {
-                id: result._id,
-                name: result.name,
-                email: result.email
-            }
-        });
-        const token = jwt.sign(
-            {
-                id: result._id,
-                email: result.email,
-                role: "admin"
-            },
-            JWT_SECRET,
-            { expiresIn: JWT_EXPIRES_IN }
-        );
-
-        res.cookie("adminToken", token, {
-            httpOnly: true,
-            maxAge: COOKIE_MAX_AGE,
-        });
-    } catch (err) {
-        return res.status(400).json({
-            status: false,
-            message: "Login failed",
+            message: "admin add failed !",
             err: err.message
         });
     }
@@ -184,4 +121,4 @@ const adduser = async (req, res) => {
         });
     }
 };
-module.exports = { addAdmin, addBranch, addAccount, adduser, loginAdmin };
+module.exports = { addAdmin, addBranch, addAccount, adduser };

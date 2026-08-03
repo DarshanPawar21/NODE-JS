@@ -46,4 +46,26 @@ export const AddTeacher = async (req, res) => {
             err: err.message
         })
     }
+};
+
+export const addAttendance = async (req, res) => {
+    try {
+        const { studentId, date, status } = req.body;
+        const result = await AttendanceSchema.create({
+            studentId,
+            date,
+            status
+        });
+        return res.status(200).json({
+            status: true,
+            message: 'Attendance add Successfuly !',
+            result
+        })
+    } catch (err) {
+        return res.status(400).json({
+            status: false,
+            message: "Attendance add failed",
+            err: err.message
+        })
+    }
 }
