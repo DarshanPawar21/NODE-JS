@@ -1,5 +1,6 @@
-import TeachersSchema from "../models/TeachersSchema";
+import TeachersSchema from "../models/TeachersSchema.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 const teacher_signin = async (req, res) => {
     const {email,password} = req.body;
     const result = await TeachersSchema.findOne({email});
@@ -14,5 +15,15 @@ const teacher_signin = async (req, res) => {
             message : "invalid password !",
         })
     }  
+    const token = jwt.sign({
+        id:result._id,
+        email:result.email,
+    }, "!@#$%&()", { expiresIn: "1h" });
 
+    res.cookie("teacher-token",token,{
+        httpOnly:true,
+        maxAge:1000*60*60*1,
+    })
 };
+
+export default teacher_signin;

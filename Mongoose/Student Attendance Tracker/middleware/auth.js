@@ -1,12 +1,22 @@
-const auth = async (req, res) => {
-    const token = jwt.sign(
-        {
-            id: result.id,
-            email: result.email,
-        }, "!@#$%&()", { expiresIn: "1h" }
-    );
-    res.cookie("teacher", token, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 1,
-    })
+import jwt from "jsonwebtoken";
+
+export const checkteacherAuth = (req, res, next) => {
+    const token = req.cookies["teacher-token"];
+    if (!token) {
+        return res.status(401).json({
+            status: false,
+            message: "Unauthorized access !"
+        })
+        next();
+    }
+    try {
+        const decoded = jwt.verify(token, "!@#$%&()");
+        req.teacher = decoded;
+        next();
+    } catch (err) {
+        return res.status(401).json({
+            status: false,
+            message: "Invalid token !"
+        })
+    }
 }

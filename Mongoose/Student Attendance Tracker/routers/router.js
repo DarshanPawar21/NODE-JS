@@ -4,6 +4,8 @@ import deleteStudent from "../controllers/delete.js";
 import updateStudent from "../controllers/updatecontrol.js";
 // import Attendance from "../controllers/attendance.js";
 // impoort addAttendance from "../controllers/addcontrol.js";
+import { checkteacherAuth } from "../middleware/auth.js";
+import teacher_signin from "../controllers/signin.js";
 const router = express.Router();
 
 router.post("/books", AddStudent);
@@ -14,4 +16,5 @@ router.patch("/books/:id", updateStudent);
 router.post("/addteacher", AddTeacher);
 router.post("/addstudent", AddStudent);
 router.post("/addattendance", addAttendance);
+router.post("/signin", checkteacherAuth, teacher_signin);
 export default router;

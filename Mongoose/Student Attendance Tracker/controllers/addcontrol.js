@@ -1,5 +1,6 @@
 import StudentSchema from "../models/StudentSchema.js";
 import TeachersSchema from "../models/TeachersSchema.js";
+import AttendanceSchema from "../models/attendanceSchema.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 export const AddStudent = async (req, res) => {
