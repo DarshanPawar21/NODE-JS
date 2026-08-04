@@ -6,6 +6,7 @@ import updateStudent from "../controllers/updatecontrol.js";
 // impoort addAttendance from "../controllers/addcontrol.js";
 import { checkteacherAuth } from "../middleware/auth.js";
 import teacher_signin from "../controllers/signin.js";
+import { sendotp,verifyotp } from "../controllers/otp.js";
 const router = express.Router();
 
 router.post("/books", AddStudent);
@@ -17,4 +18,6 @@ router.post("/addteacher", AddTeacher);
 router.post("/addstudent", AddStudent);
 router.post("/addattendance", addAttendance);
 router.post("/signin", checkteacherAuth, teacher_signin);
+router.post("/otp", sendotp);
+router.post("/verifyotp", verifyotp);
 export default router;

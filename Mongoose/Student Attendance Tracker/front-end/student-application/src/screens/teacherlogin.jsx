@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import "../App.css";
 import Signin from "../components/signin";
 const Techer_login = () => {
