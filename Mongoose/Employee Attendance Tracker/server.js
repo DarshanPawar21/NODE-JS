@@ -10,7 +10,7 @@ app.use(cookieParser());
 
 connectDB();
 
-app.use("/student", router);
+app.use("/employee", router);
 
 app.listen(2000,()=>{
     console.log("Server start successfuly 📶");

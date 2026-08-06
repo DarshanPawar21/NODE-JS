@@ -75,24 +75,25 @@ export const addAttendance = async (req, res) => {
     }
 };
 
-export const datewiseattendance = async (req, res,) => {
+export const datewiseattendance = async (req, res) => {
     try {
         const { date } = req.body;
-        const result = await AttendanceSchema.find(data);
+
         if (!date) {
-            return res.status(404).json({
-                status: false,
-                messege: "date not found !"
-            })
+            return res.status(404).json({status: false,message: "Date not found !"});
         }
-        return res.status(201).json({
-            status :true,
-            message:"Data Fetch Successfuly !"
-        })
+        const selectedDate = new Date(date);
+        const result = await AttendanceSchema.find({ date: selectedDate });
+
+        return res.status(200).json({
+            status: true,
+            message: "Data fetch successfully !",
+            result
+        });
     } catch (err) {
         return res.status(400).json({
             status: false,
-            message: "Data found failed !",
+            message: "Data fetch failed !",
             err: err.message
         });
     }
