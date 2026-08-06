@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/add", addAttendance);
 router.post("/addfaculty", AddFaculty);
-router.post("/signin", Faculty_signin);
+router.post("/signin",checkFacultyAuth, Faculty_signin);
 router.get("/getdata", datewiseattendance);
 
 export default router;

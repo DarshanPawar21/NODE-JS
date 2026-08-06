@@ -19,11 +19,11 @@ const Faculty_signin = async (req, res) => {
         const token = jwt.sign({
             id: result._id,
             email: result.email,
-        }, "!@#$%&()", { expiresIn: "1h" });
+        }, process.env.JWT_SECRET || "!@#$%&()", { expiresIn: process.env.JWT_EXPIRES_IN || "1h" });
 
-        res.cookie("teacher-token", token, {
+        res.cookie("employee-token", token, {
             httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 1,
+            maxAge: Number(process.env.COOKIE_MAX_AGE) || 1000 * 60 * 60 * 1,
         })
         return res.status(201).json({
             status:true,

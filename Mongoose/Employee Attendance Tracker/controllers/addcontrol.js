@@ -52,12 +52,12 @@ export const addAttendance = async (req, res) => {
                 message: "Email not found !"
             });
         }
-
-        const today = new Date();
+        const currentDate = new Date();
+        const localDate = currentDate.toLocaleDateString('en-GB');
         const result = await AttendanceSchema.create({
             FacultyId: faculty._id,
             email: faculty.email,
-            date: today,
+            date: localDate,
             status
         });
 
@@ -80,7 +80,7 @@ export const datewiseattendance = async (req, res) => {
         const { date } = req.body;
 
         if (!date) {
-            return res.status(404).json({status: false,message: "Date not found !"});
+            return res.status(404).json({ status: false, message: "Date not found !" });
         }
         const selectedDate = new Date(date);
         const result = await AttendanceSchema.find({ date: selectedDate });

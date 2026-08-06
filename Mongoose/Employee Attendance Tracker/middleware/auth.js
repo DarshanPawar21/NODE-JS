@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const checkFacultyAuth = (req, res, next) => {
-    const token = req.cookies["teacher-token"];
+    const token = req.cookies["employee-token"];
     if (!token) {
         return res.status(401).json({
             status: false,
@@ -10,7 +10,7 @@ const checkFacultyAuth = (req, res, next) => {
         next();
     }
     try {
-        const decoded = jwt.verify(token, "!@#$%&()");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.teacher = decoded;
         next();
     } catch (err) {
