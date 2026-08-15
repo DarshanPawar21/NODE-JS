@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const BrachnSchema = new mongoose.Schema({
-    branchCode: {
+    IFSCCode: {
         type: String,
     },
     branchName: {
@@ -9,6 +9,9 @@ const BrachnSchema = new mongoose.Schema({
     },
     branchCity: {
         type: String,
+    },
+    branchPhone:{
+        type:String
     }
 }, { timestamps: true })
 module.exports = mongoose.model("Branch", BrachnSchema);
