@@ -1,13 +1,11 @@
 import express from "express";
-import { addcustomer, getcustomer, updatecustomer,getbyid, putbyid } from "../controllers/controls_customer.js";
-import { checktime } from "../middeleware/checktime.js";
+import { addcustomer, deletecustomer, getcustomer, updatecustomer } from "../controllers/controls_customer.js";
 
 const router = express.Router();
 
 router.post("/customer",addcustomer);
-router.get("/customer",checktime,getcustomer);
+router.get("/customer",getcustomer);
 router.put("/customer",updatecustomer);
-router.get("/customer/:id",getbyid);
-router.put("/customer/:id",putbyid);
+router.delete("/customer",deletecustomer);
 
 export default router;
