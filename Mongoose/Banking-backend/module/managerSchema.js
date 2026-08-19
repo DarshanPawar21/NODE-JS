@@ -16,15 +16,18 @@ const MangerSchema = new mongoose.Schema({
         type:Number,
         require:true
     }, 
-    barnchId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Branch",
+    IFSCCode:{
+        type:String,
         required:true
     },
-    role:{
+    password:{
         type:String,
-        default:'Manager',
         required:true
     }
+    // role:{
+    //     type:String,
+    //     default:'Manager',
+    //     required:true
+    // }
 },{timestamps:true});
 module.exports = mongoose.model("Manager",MangerSchema);

@@ -5,6 +5,10 @@ const AccountShcema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users",
     },
+    aadharNumber: {
+        type: String,
+        required: true,
+    },
     branchId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Branch",
@@ -12,6 +16,10 @@ const AccountShcema = new mongoose.Schema({
     madebyManager: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Manager',
+    },
+    IFSCCode: {
+        type: String,
+        required: true
     },
     accountNumber: {
         type: Number,

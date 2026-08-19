@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const BrachnSchema = new mongoose.Schema({
     IFSCCode: {
         type: String,
+        required:true,
     },
     branchName: {
         type: String,

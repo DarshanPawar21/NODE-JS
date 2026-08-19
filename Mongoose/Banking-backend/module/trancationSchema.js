@@ -6,9 +6,16 @@ const transactionSchema = new mongoose.Schema({
         ref: "Users",
         required: true
     },
+    IFSCCode: {
+        type: String,
+        required: true,
+    },
+    accountType: {
+        type: String,
+        required: true
+    },
     accountNumber: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Account",
+        type: String,
         required: true
     },
     balance: {

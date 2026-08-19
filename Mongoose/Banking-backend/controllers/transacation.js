@@ -4,46 +4,68 @@ const accountSchema = require("../module/acountsSchema.js");
 const transactiondetails = async (req, res) => {
     try {
         const { accountNumber, tranamount, transactionType } = req.body;
+
+        const amount = Number(tranamount);
+        if (amount <= 0) {
+            return res.status(400).json({
+                status: false,
+                message: "Invalid transaction amount!"
+            });
+        }
+
         const account = await accountSchema.findOne({ accountNumber });
 
         if (!account) {
             return res.status(404).json({
                 status: false,
-                message: "Account or not found !"
+                message: "Account not found!"
             });
         }
 
-        if (transactionType.toLowerCase() === "credit") {
-            account.balance = account.balance + tranamount;
-        } else if (transactionType.toLowerCase() === "debit") {
-            if (account.balance < tranamount) {
+        let currentBalance = Number(account.balance) || 0;
+        const type = transactionType.toLowerCase();
+
+        if (type === "credit") {
+            currentBalance = currentBalance + amount;
+        } else if (type === "debit") {
+            if (currentBalance < amount) {
                 return res.status(400).json({
                     status: false,
-                    message: "Insufficient balance !"
+                    message: "Insufficient balance!"
                 });
             }
-            account.balance = account.balance - tranamount;
+            currentBalance = currentBalance - amount;
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Invalid transaction type!"
+            });
         }
 
-        const transactionDate = new Date(Date.now());
+        account.balance = currentBalance;
+        await account.save();
+
+        const transactionDate = new Date();
         const transaction = await transactionSchema.create({
             user_id: account.userId,
+            IFSCCode: account.IFSCCode,
+            accountType: account.accountType,
             accountNumber: account.accountNumber,
-            balance: account.balance,
-            transactionType,
+            balance: currentBalance, // New updated calculated balance
+            transactionType: type,
             transactionDate,
-            tranamount
+            tranamount: amount
         });
 
         return res.status(201).json({
             status: true,
-            message: "Transaction successfully !",
+            message: "Transaction successful!",
             transaction
         });
     } catch (err) {
         return res.status(400).json({
             status: false,
-            message: "Transaction failed !",
+            message: "Transaction failed!",
             err: err.message
         });
     }

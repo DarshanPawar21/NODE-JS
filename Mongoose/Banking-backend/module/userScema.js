@@ -7,6 +7,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    IFSCCode:{
+        type:String,
+        required:true
+    },
     aadharNumber: {
         type: String,
         unique: true,

@@ -1,5 +1,7 @@
 const acountsSchema = require("../module/acountsSchema.js");
 const brachShema = require("../module/brachShema.js");
+const employeeSchema = require("../module/employeeSchema.js");
+const managerSchema = require("../module/managerSchema.js");
 const trancationSchema = require("../module/trancationSchema.js");
 const userSchema = require("../module/userScema.js");
 const { addAccount } = require("./addcontrol.js");
@@ -72,4 +74,37 @@ const gettransaction = async (req, res) => {
     }
 };
 
-module.exports = { getuser, getbranch, getaccount, gettransaction };
+const getmanagerdata = async (req, res) => {
+    try {
+        const result = await managerSchema.find();
+        return res.status(200).json({
+            status: true,
+            message: "Manager data fetch successfully !",
+            result
+        })
+    } catch (err) {
+        return res.status(400).json({
+            status: false,
+            message: "Manager data fetch failed !",
+            err: err.message
+        });
+    }
+}
+
+const getemployee = async (req, res) => {
+    try {
+        const result = await employeeSchema.find();
+        return res.status(200).json({
+            status: true,
+            message: "Employee data fetch successfully !",
+            result
+        })
+    } catch (err) {
+        return res.status(400).json({
+            status: false,
+            message: "Emplyee data fetch failed !",
+            err: err.message
+        });
+    }
+}
+module.exports = { getuser, getbranch, getaccount, gettransaction, getmanagerdata, getemployee };
