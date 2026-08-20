@@ -6,14 +6,54 @@ const trancationSchema = require("../module/trancationSchema.js");
 const userSchema = require("../module/userScema.js");
 const { addAccount } = require("./addcontrol.js");
 
-const getuser = async (req, res) => {
-    try {
-        const result = await userSchema.find();
+const getPagination = (req) => {
+    const pageValue = req.query.page || req.body?.page;
+    const limitValue = req.query.limit || req.body?.limit;
+    const shouldPaginate = pageValue !== undefined || limitValue !== undefined;
+    const page = Math.max(parseInt(pageValue, 10) || 1, 1);
+    const limit = Math.max(parseInt(limitValue, 10) || 10, 1);
+
+    return {
+        shouldPaginate,
+        page,
+        limit,
+        skip: (page - 1) * limit
+    };
+};
+
+const sendData = async (req, res, Model, filter, successMessage) => {
+    const pagination = getPagination(req);
+
+    if (!pagination.shouldPaginate) {
+        const result = await Model.find(filter);
         return res.status(200).json({
             status: true,
-            message: "User data fetch successfully !",
+            message: successMessage,
             result
         });
+    }
+
+    const totalCount = await Model.countDocuments(filter);
+    const result = await Model.find(filter).skip(pagination.skip).limit(pagination.limit);
+
+    return res.status(200).json({
+        status: true,
+        message: successMessage,
+        result,
+        pagination: {
+            page: pagination.page,
+            limit: pagination.limit,
+            totalCount,
+            totalPages: Math.ceil(totalCount / pagination.limit),
+            hasNextPage: pagination.page < Math.ceil(totalCount / pagination.limit),
+            hasPrevPage: pagination.page > 1
+        }
+    });
+};
+
+const getuser = async (req, res) => {
+    try {
+        return await sendData(req, res, userSchema, {}, "User data fetch successfully !");
     } catch (err) {
         return res.status(400).json({
             status: false,
@@ -25,12 +65,7 @@ const getuser = async (req, res) => {
 
 const getbranch = async (req, res) => {
     try {
-        const result = await brachShema.find();
-        return res.status(200).json({
-            status: true,
-            message: "branch data fetch successfully !",
-            result
-        });
+        return await sendData(req, res, brachShema, {}, "branch data fetch successfully !");
     } catch (err) {
         return res.status(400).json({
             status: false,
@@ -42,12 +77,7 @@ const getbranch = async (req, res) => {
 
 const getaccount = async (req, res) => {
     try {
-        const result = await acountsSchema.find();
-        return res.status(200).json({
-            status: true,
-            message: "User data fetch successfully !",
-            result
-        });
+        return await sendData(req, res, acountsSchema, {}, "User data fetch successfully !");
     } catch (err) {
         return res.status(400).json({
             status: false,
@@ -59,12 +89,7 @@ const getaccount = async (req, res) => {
 
 const gettransaction = async (req, res) => {
     try {
-        const result = await trancationSchema.find();
-        return res.status(200).json({
-            status: true,
-            message: "Account data fetch successfully !",
-            result
-        });
+        return await sendData(req, res, trancationSchema, {}, "Account data fetch successfully !");
     } catch (err) {
         return res.status(400).json({
             status: false,
@@ -76,12 +101,7 @@ const gettransaction = async (req, res) => {
 
 const getmanagerdata = async (req, res) => {
     try {
-        const result = await managerSchema.find();
-        return res.status(200).json({
-            status: true,
-            message: "Manager data fetch successfully !",
-            result
-        })
+        return await sendData(req, res, managerSchema, {}, "Manager data fetch successfully !")
     } catch (err) {
         return res.status(400).json({
             status: false,
@@ -93,12 +113,7 @@ const getmanagerdata = async (req, res) => {
 
 const getemployee = async (req, res) => {
     try {
-        const result = await employeeSchema.find();
-        return res.status(200).json({
-            status: true,
-            message: "Employee data fetch successfully !",
-            result
-        })
+        return await sendData(req, res, employeeSchema, {}, "Employee data fetch successfully !")
     } catch (err) {
         return res.status(400).json({
             status: false,

@@ -134,8 +134,8 @@ const loginManager = async (req, res) => {
 
 const loginEmployee = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const result = await employeeSchema.findOne({ email });
+        const { Employee_email, Employee_password } = req.body;
+        const result = await employeeSchema.findOne({ Employee_email });
 
         if (!result) {
             return res.status(404).json({
@@ -144,7 +144,7 @@ const loginEmployee = async (req, res) => {
             });
         }
 
-        const ismatch = await bcrypt.compare(password, result.password);
+        const ismatch = await bcrypt.compare(Employee_password, result.Employee_Password);
         if (!ismatch) {
             return res.status(401).json({
                 status: false,

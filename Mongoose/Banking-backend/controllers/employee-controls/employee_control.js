@@ -1,9 +1,7 @@
-const acountsSchema = require("../../module/acountsSchema");
+﻿const acountsSchema = require("../../module/acountsSchema");
 const employeeSchema = require("../../module/employeeSchema");
-const managerSchema = require("../../module/managerSchema");
 const trancationSchema = require("../../module/trancationSchema");
 const userScema = require("../../module/userScema");
-// import { loginAdmin } from "../auth";
 
 const getPagination = (req) => {
     const pageValue = req.query.page || req.body?.page;
@@ -50,9 +48,6 @@ const sendBranchData = async (req, res, Model, filter) => {
         }
     });
 };
-
-
-
 
 const User_data = async (req, res) => {
     try {
@@ -105,4 +100,5 @@ const Employee_data = async (req, res) => {
         });
     }
 };
-module.exports = { User_data, Account_data, Transaction_data, Employee_data};
+
+module.exports = { User_data, Account_data, Transaction_data, Employee_data };

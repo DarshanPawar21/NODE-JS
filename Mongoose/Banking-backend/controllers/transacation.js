@@ -3,7 +3,14 @@ const accountSchema = require("../module/acountsSchema.js");
 
 const transactiondetails = async (req, res) => {
     try {
-        const { accountNumber, tranamount, transactionType } = req.body;
+        const { accountNumber, tranamount, transactionType, IFSCCode } = req.body;
+
+        if (!accountNumber || !tranamount || !transactionType) {
+            return res.status(400).json({
+                status: false,
+                message: "Account number, amount and transaction type are required!"
+            });
+        }
 
         const amount = Number(tranamount);
         if (amount <= 0) {
@@ -19,6 +26,13 @@ const transactiondetails = async (req, res) => {
             return res.status(404).json({
                 status: false,
                 message: "Account not found!"
+            });
+        }
+
+        if (IFSCCode && account.IFSCCode !== IFSCCode) {
+            return res.status(403).json({
+                status: false,
+                message: "This account does not belong to your branch!"
             });
         }
 
