@@ -1,18 +1,16 @@
-import mongoose from "mongoose";
 import express from "express";
 import connectDB from "./config/db.js";
-
+import router from "./routers/router.js";
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
-connectDB();
+
+// connect DB Funcation.
 app.use(express.json());
-// app.use(
-//     cors({
+connectDB();
 
-//     })
-// )
+app.use("/api",router);
 
-// app.use("/chat",router);
-
-app.listen(5000,()=>{
+app.listen(process.env.PORT,()=>{
     console.log("Server start successfully 📶 !");
 });
