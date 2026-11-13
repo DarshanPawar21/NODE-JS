@@ -1,145 +1,128 @@
-import User_signup from "../module/user.js";
+import user_signup from "../module/user.js";
+import cookieParser from "cookie-parser";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import crypto from "crypto";
-
+import user from "../module/user.js";
 dotenv.config();
-const sign_up = async (req, res) => {
+
+
+// User SignUP Code with create real token.
+export const signup = async (req, res) => {
+    const { username, email, phone, password } = req.body;
+
+    const isareadyuser = await user_signup.findOne({ email });
+
+    if (isareadyuser) {
+        return res.status(401).json({
+            status: false,
+            message: "This User is All ready Exist !"
+        })
+    }
+
+    const hashpassword = await bcrypt.hash(password, 10);
+
+    const users = await user_signup.create({
+        name: username,
+        email: email,
+        phone: phone,
+        password: hashpassword
+    });
+
+    const token = jwt.sign({
+        id: users._id
+    }, process.env.JWT_CODE, {
+        expiresIn: "1h"
+    });
+
+    const refresh_token = jwt.sign({
+        id: users._id
+    }, process.env.JWT_CODE, {
+        expiresIn: "7d"
+    });
+
+    res.cookie("refresh_token", refresh_token, {
+        httpOnly: true,
+        sucure: true,
+        sameSide: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    })
+
+    return res.status(201).json({
+        status: true,
+        message: "The user Sign-Up successfuly !",
+        token
+    });
+};
+
+// user login and identifive code with jwt verify.
+
+export const get_me = async (req, res) => {
     try {
-        const { name, email, phone, Password } = req.body;
+        const authHeader = req.headers.authorization?.split(" ")[1];
 
-        if (!name || !email || !phone || !Password) {
-            return res.status(400).json({
+        if (!authHeader) {
+            return res.status(401).json({
                 status: false,
-                message: "All fields are required !",
-            });
-        }
-
-        const hash = await bcrypt.hash(Password, 10);
-
-        const exits_user = await User_signup.findOne({ email: email });
-
-        if (exits_user) {
-            return res.status(400).json({
-                status: false,
-                message: "User is already exits !"
+                meassge: "Token is not found !"
             })
         }
 
-        const user = await User_signup.create({
-            name: name,
-            email: email,
-            phone: phone,
-            Password: hash
-        });
+        const identifive = jwt.verify(authHeader, process.env.JWT_CODE);
 
-        const Access_token = jwt.sign(
-            {
-                id: user._id,
-                email: user.email
-            }, process.env.JWT_CODE, {
-            expiresIn: "15m"
+        const user = await user_signup.findById(identifive.id);
+
+        if (!user) {
+            return res.status(401).json({
+                status: false,
+                meassge: "Token is not found !"
+            })
         }
-        )
 
-        const refres_token = jwt.sign(
-            {
-                message: "This is refres token !",
-                id: user._id,
-            }, process.env.JWT_CODE
-        )
-
-        res.cookie("RefreshToken", refres_token, {
-            httpOnly: true,
-            secure: true,
-            sameSitr: "Strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
-        return res.status(200).json({
+        return res.status(201).json({
             status: true,
-            message: "User Signup Successfully !",
-            data: user,
-            token: Access_token
+            meassge: "Well come !",
+            user
         })
-
-    }
-    catch (err) {
-        return res.status(400).json({
+    } catch (error) {
+        return res.status(401).json({
             status: false,
-            message: "Error while signup !",
-            data: err
+            message: error.meassge
         })
     }
 };
 
-const get_user = async (req, res) => {
+export const refresh_token = (req, res) => {
     try {
-        const token = req.headers.authorization.split(" ")[1];
+        const Refresh_token = req.cookies.refresh_token;
 
-        if (!token) {
+        if (!Refresh_token) {
             return res.status(401).json({
                 status: false,
-                message: "Unauthorized !"
+                message: "Refresh Token NOt foulded !"
             })
         }
 
-        const decode = jwt.verify(token, process.env.JWT_CODE);
-
-        return res.status(200).json({
-            status: true,
-            message: "User get successfully !",
-            data: decode
-        })
-
-    } catch (err) {
-        return res.status(400).json({
-            status: false,
-            message: "Error while get user !",
-            data: err
-        })
-    }
-};
-
-const refresh_token = async (req, res) => {
-    try {
-        const refreshToken = req.cookies.RefreshToken;
-
-        if (!refreshToken) {
-            return res.status(401).json({
-                status: false,
-                message: "Refresh Token is not awalable !"
-            })
-        }
-
-        const decode = jwt.verify(refreshToken, process.env.JWT_CODE)
+        const decode = jwt.verify(Refresh_token, process.env.JWT_CODE);
 
         const access_token = jwt.sign({
             id: decode.id
         }, process.env.JWT_CODE, {
             expiresIn: "15m"
-        })
+        });
 
-        return res.status(201).json({
-            status: false,
-            message: "Refresh Token Auth Successfuly !",
-            access_token
-        })
+        return  res.status(201).json({
+        status: true,
+        message: "The user Sign-Up successfuly !",
+        access_token
+    });
+
     } catch (err) {
         return res.status(401).json({
             status: false,
-            message: "Refresh Token Auth Failed !",
-            err: err.message
+            message: err.message
         })
     }
+
+
 }
-
-function generateOTP(){
-    return crypto.randomInt(100000,1000000).toString();
-};
-
-
-
-
-
-export { sign_up, get_user,refresh_token };

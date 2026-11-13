@@ -14,7 +14,7 @@ const user_signup = new mongoose.Schema({
         type:Number,
         required:true
     },
-    Password:{
+    password:{
         type:String,
         required:true
     }

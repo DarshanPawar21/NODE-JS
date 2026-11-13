@@ -124,7 +124,7 @@ const loginManager = async (req, res) => {
             result
         });
     } catch (err) {
-        return res.status(400).json({
+        return res.status(401).json({
             status: false,
             message: "Login failed",
             err: err.message
